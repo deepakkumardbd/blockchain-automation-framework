@@ -28,12 +28,11 @@ spec:
     service:
       type: NodePort
       tcp:
-        port: {{ ports_tcp.port }}
-        targetPort: {{ ports_tcp.targetPort }}
+        port: {{ tcp_port }}
+        targetPort: {{ tcp_targetport }}
       web:
-        targetPort: {{ ports_web.targetPort }}
-        port: {{ ports_web.port }}
-      annotations: {}
+        targetPort: {{ web_targetport }}
+        port: {{ web_port }}
     deployment:
       annotations: {}
     pvc:
