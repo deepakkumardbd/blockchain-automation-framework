@@ -1,7 +1,6 @@
 ###########################################################
 # Playbook to create deployment files for the following:
 # namespaces, service account and clusterrolebinding
-# CENM Signer
 # Playbook arguments: complete network.yaml
 ###########################################################
 - hosts: ansible_provisioners
@@ -31,13 +30,14 @@
     include_role:
       name: create/storageclass
     vars:
-      storageclass_name: "{{ org.cloud_provider }}storageclass"
+      storageclass_name: "cenmsc"
       git_dir: "{{ org.gitops.release_dir }}"
       org: "{{ org }}"
       kubernetes: "{{ org.k8s }}"
     loop: "{{ network['organizations'] }}"
     loop_control:
       loop_var: org
+
   # ----------------------------------------------------------------------  
   # Setup Vault-Kubernetes accesses and Regcred for docker registry
   - name: "Setup vault"   
@@ -47,7 +47,7 @@
       component_ns: "{{ org.name | lower }}-ent"
       kubernetes: "{{ org.k8s }}"
       vault: "{{ org.vault }}"
-      component_name: "{{ org.name | lower}}"
+      component_name: "{{ org.name | lower }}"
       component_path: "{{ org.name | lower }}/"
       component_auth: "cordaent{{ org.name | lower }}"
       component_type: "{{ org.type | lower }}"
@@ -81,11 +81,20 @@
     loop_control:
       loop_var: org
     when: org.type == 'cenm'
-    # ----------------------------------------------------------------------   
+  # ----------------------------------------------------------------------   
   # Create ambassador certificates for nmap
   - name: Create ambassador certificates for nmap
     include_role:
       name: create/certificates/ambassador/nmap
+    loop: "{{ network['organizations'] }}"
+    loop_control:
+      loop_var: org
+    when: org.type == 'cenm'
+  # ----------------------------------------------------------------------   
+  # Create ambassador certificates for notary
+  - name: Create ambassador certificates for notary
+    include_role:
+      name: create/certificates/ambassador/notary
     loop: "{{ network['organizations'] }}"
     loop_control:
       loop_var: org
@@ -100,10 +109,28 @@
       loop_var: org
     when: org.type == 'cenm'
   # ----------------------------------------------------------------------   
+  # Create value file for notary-initial-registration 
+  - name: Create value file for notary registration job
+    include_role:
+      name: setup/notary-initial-registration
+    loop: "{{ network['organizations'] }}"
+    loop_control:
+      loop_var: org
+    when: org.type == 'cenm'
+  # ----------------------------------------------------------------------   
   # Create value file for nmap
   - name: Create value file for nmap
     include_role:
       name: setup/nmap
+    loop: "{{ network['organizations'] }}"
+    loop_control:
+      loop_var: org
+    when: org.type == 'cenm'
+  # ----------------------------------------------------------------------   
+  # Create value file for notary 
+  - name: Create value file for notary
+    include_role:
+      name: setup/notary
     loop: "{{ network['organizations'] }}"
     loop_control:
       loop_var: org
