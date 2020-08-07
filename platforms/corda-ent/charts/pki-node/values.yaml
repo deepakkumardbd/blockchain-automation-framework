@@ -72,7 +72,7 @@ healthcheck:
 cordaJarMx:
 
 # Ex healthCheckNodePort: 0
-healthCheckNodePort: 0
+healthCheckNodePort:
 
 # where is CENM service jar file stored
 # Ex. jarPath: bin
@@ -87,12 +87,12 @@ pki:
   certificates:
     bridge:
       # subject: "CN=Test Bridge Certificate, OU=HQ, O=HoldCo LLC, L=New York, C=US"
-      subject: "CN=Test Bridge Certificate, OU=HQ, O=HoldCo LLC, L=New York, C=US"
+      subject:
     # Float certificate specifications
     float:
       # subject: "CN=Test Float Certificate, OU=HQ, O=HoldCo LLC, L=New York, C=US"
-      subject: "CN=Test Float Certificate, OU=HQ, O=HoldCo LLC, L=New York, C=US"
+      subject:
     # Firewall CA certificate specifications
     firewallca:
       #subject: "CN=Test Firewall CA Certificate, OU=HQ, O=HoldCo LLC, L=New York, C=US"    
-      subject: "CN=Test Firewall CA Certificate, OU=HQ, O=HoldCo LLC, L=New York, C=US"
+      subject:
