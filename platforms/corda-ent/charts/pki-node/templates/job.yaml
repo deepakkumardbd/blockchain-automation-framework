@@ -34,11 +34,8 @@ spec:
           command: ["/bin/bash", "-c"]
           args:
           - |-
-            rm -r DATA/done.txt
             mkdir  DATA/node
             time java -Xmx{{ .Values.cordaJarMx }}G -jar {{ .Values.jarPath }}/pkitool.jar --config-file {{ .Values.configPath }}/pki.conf --ignore-missing-crl
-            #creating a dummy file to perform check if last line is executed or not.
-            touch DATA/done.txt
           volumeMounts:
           - name: pkitool-certs-keys
             mountPath: /opt/corda/DATA
@@ -81,13 +78,12 @@ spec:
             KUBE_SA_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
             VAULT_TOKEN=$(curl -sS --request POST ${VAULT_ADDR}/v1/auth/${KUBERNETES_AUTH_PATH}/login -H "Content-Type: application/json" -d '{"role":"vault-role","jwt":"'"${KUBE_SA_TOKEN}"'"}' | jq -r 'if .errors then . else .auth.client_token end')
             validateVaultResponse 'vault login token' "${VAULT_TOKEN}"
-            cd ${BASE_DIR}/DATA
+            cd ${BASE_DIR}/DATA/node
             COUNTER=1
             while [ "$COUNTER" -lt {{ $.Values.healthcheck.readinessthreshold }} ]
             do
-                if [ -e done.txt ]
+                if [ -e bridge.jks ] && [ -e firewallca.jks ] && [ -e float.jks ]
                 then
-                  cd ${BASE_DIR}/DATA/node
                   # putting certs for node's firewall at firewall path
                   echo "found firewall certificates, performing vault put at node path"
                   (echo '{"firewallca.jks": "'; base64 ${BASE_DIR}/DATA/node/firewallca.jks; echo '"}') | curl -H "X-Vault-Token: ${VAULT_TOKEN}" -d @- ${VAULT_ADDR}/v1/${CERTS_SECRET_PREFIX}/{{ .Values.peerName }}/firewall
