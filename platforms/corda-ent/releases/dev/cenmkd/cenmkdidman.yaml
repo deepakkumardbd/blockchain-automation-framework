@@ -1,0 +1,63 @@
+apiVersion: flux.weave.works/v1beta1
+kind: HelmRelease
+metadata:
+  name: cenmkdidman
+  namespace: cenmkd-ent
+  annotations:
+    flux.weave.works/automated: "false"
+spec:
+  releaseName: cenmkdidman
+  chart:
+    git: git@github.com:deepakkumardbd/blockchain-automation-framework.git
+    ref: corda-checks-test
+    path: platforms/corda-ent/charts/idman
+  values:
+    nodeName: idmankd
+    metadata:
+      namespace: cenmkd-ent
+    storage:
+      name: cenmsc
+    replicas: 1
+    image:
+      initContainerName: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+      imagepullsecret: regcred
+    dockerImage:
+      name: corda/enterprise-identitymanager
+      tag: 1.2-zulu-openjdk8u242
+      pullPolicy: Always
+      imagePullSecret: regcred
+    acceptLicense: YES
+    vault:
+      address: http://a9a3ce8c2dd2411ea98cb062ce771477-215211943.eu-west-1.elb.amazonaws.com:9000
+      certsecretprefix: secret/cenmkd
+      role: vault-role
+      authpath: cordaentcenmkd
+      serviceaccountname: vault-auth
+    ambassador:
+      external_url_suffix: rc.dev.aws.blockchaincloudpoc-develop.com
+    volume:
+      baseDir: /opt/corda
+    service:
+      port: 10000
+    serviceInternal:
+      port: 5052
+    serviceRevocation:
+      port: 5053
+    shell:
+      sshdPort: 2222
+      user: idmankd
+      password: idmankdP
+    database:
+      driverClassName: "org.h2.Driver"
+      url: "jdbc:h2:file:./h2/identity-manager-persistence;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=10000;WRITE_DELAY=0;AUTO_SERVER_PORT=0"
+      user: idmankd-db-user
+      password: idmankd-db-password
+      runMigration: "true"
+    cordaJarMx: 1
+    healthCheckNodePort: 0
+    jarPath: bin
+    configPath: etc
+    sleepTimeAfterError: 120
+    healthcheck:
+      readinesscheckinterval: 10
+      readinessthreshold: 15
