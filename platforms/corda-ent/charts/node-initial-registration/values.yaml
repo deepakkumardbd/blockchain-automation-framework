@@ -1,4 +1,4 @@
-# Default values for Notary Registration job.
+# Default values for Node Registration job.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -84,6 +84,12 @@ tlsCertCrlIssuer:
 
 devMode: false
 
+networkServices:
+  # doormanURL defines the accesspoint for the Identity Manager server (protocol + domain name + port, eg. http://my-identity-manager:1000)
+  doormanURL: 
+  # networkMapURL defines the accesspoint for the Network Map server (protocol + domain name + port, eg. http://my-network-map:10000)
+  networkMapURL: 
+    
 service:
   # p2pPort defines the port number of inbound connections
   # Eg. p2pPort: 40000
