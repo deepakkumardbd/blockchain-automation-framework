@@ -63,7 +63,7 @@ spec:
                   ${VAULT_ADDR}/v1/${1})
                   curl_response=$?
                   if test "$http_code" != "200" ; then
-                      echo "Http response code from Vault - $http_code"
+                      echo "Http response code from Vault - $http_code and curl_response - $curl_response"
                       if test "$curl_response" != "0"; then
                         echo "Error: curl command failed with error code - $curl_response"
                         exit 1
